@@ -14,10 +14,10 @@ app.use(cors());
 app.use(express.urlencoded({extended:true}));
 
 let users=[
-    {name:"rodrigo",surName:"perez",email:"rodri@rodri",pass:"rodri123",userName:"rodrigol"},
-    {name:"emanuel",surName:"amerio",email:"ema@ema",pass:"ema123",userName:"emaRose"},
-    {name:"nahuel",surName:"cuaglio",email:"nahu@nahu",pass:"nahu123",userName:"nahuCua"},
-    {name:"ian",surName:"patrani",email:"ian@ian",pass:"ian123",userName:"ianP"},
+    {email:"rodri@rodri",pass:"rodri123",userName:"rodrigol"},
+    {email:"ema@ema",pass:"ema123",userName:"emaRose"},
+    {email:"nahu@nahu",pass:"nahu123",userName:"nahuCua"},
+    {email:"ian@ian",pass:"ian123",userName:"ianP"},
 ]
 
 app.get("/users",(req,res)=>{
@@ -35,12 +35,12 @@ app.get("/user/:email",(req,res)=>{
     res.send(false);
 });
 
-app.post("/user/:email/:name/:surname/:pass/:username",(req,res)=>{
+app.post("/user/:email/:pass/:username",(req,res)=>{
 
-    const {email,name,surname,pass,username}= req.params;
+    const {email,pass,username}= req.params;
 
 
-    let user={email,name,surname,pass,username};
+    let user={email,pass,username};
 
     bcrypt.hash(user.pass,SALT,(err,hash)=>{
         if(!err){
@@ -49,9 +49,7 @@ app.post("/user/:email/:name/:surname/:pass/:username",(req,res)=>{
         }
     })
     const payload={
-        user:user.nombre,
         email:user.email,
-        surname:user.surname,
         pass:user.pass,
         username:user.username,
         
