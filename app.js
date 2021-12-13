@@ -13,11 +13,18 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({extended:true}));
 
+let password="hol123"
+bcrypt.hash(pass,SALT,(err,hash)=>{
+    if(!err){
+        password=hash
+    }
+})
+
 let users=[
-    {email:"rodri@rodri",pass:"rodri123",userName:"rodrigol"},
-    {email:"ema@ema",pass:"ema123",userName:"emaRose"},
-    {email:"nahu@nahu",pass:"nahu123",userName:"nahuCua"},
-    {email:"ian@ian",pass:"ian123",userName:"ianP"},
+    {email:"rodri@rodri",pass:password,userName:"rodrigol"},
+    {email:"ema@ema",pass:password,userName:"emaRose"},
+    {email:"nahu@nahu",pass:password,userName:"nahuCua"},
+    {email:"ian@ian",pass:password,userName:"ianP"},
 ]
 
 app.get("/users",(req,res)=>{
@@ -64,6 +71,24 @@ app.post("/user/:email/:pass/:username",(req,res)=>{
     })
 })
 
+app.post("/user/verify/:user/:pass",(req,res)=>{
+
+    const user= req.params.user;
+    const pass= req.params.pass;
+
+    users.find(el=>{
+        if(el.userName==user){
+            bcrypt.compare(pass,el.pass,(err,hash)=>{
+                if(!err){
+                    res.send(true);
+                }
+            })
+        }
+    })
+
+   
+});
+
 app.post("/user/verify/:email/:pass",(req,res)=>{
 
     const token= req.headers.authorization.split(" ")[1]
@@ -77,20 +102,21 @@ app.post("/user/verify/:email/:pass",(req,res)=>{
                     if(user.email== email){
                         bcrypt.compare(pass,user.pass,(err,hash)=>{
                             if(!err){
-                                res.send(true);
+                                res.send(`verify ${hash} `);
                             }
                         });
                     }
                 });
             }
             else
-            res.send(false)
+            res.send("no pudimos verificar su token")
         });
     }
     else
-     res.send(false);
+     res.send("el token no llego");
    
 });
+
 app.delete("/delete/:email",(req,res)=>{
 
     let{email}= req.params;
