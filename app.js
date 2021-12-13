@@ -13,19 +13,37 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({extended:true}));
 
-let password="hol123"
-bcrypt.hash(pass,SALT,(err,hash)=>{
+let users=[]
+let password="hola123"
+bcrypt.hash(password,SALT,(err,hash)=>{
+    let user={email:"rodri@rodri",pass:"",username:"rodrigol"}
     if(!err){
-        password=hash
+        user.pass=hash
+        users.push(user)
+    }
+})
+bcrypt.hash(password,SALT,(err,hash)=>{
+    let user={email:"ema@ema",pass:"",username:"emaRose"}
+    if(!err){
+        user.pass=hash
+        users.push(user)
+    }
+})
+bcrypt.hash(password,SALT,(err,hash)=>{
+    let user={email:"nahu@nahu",pass:"",username:"nahuCua"}
+    if(!err){
+        user.pass=hash
+        users.push(user)
+    }
+})
+bcrypt.hash(password,SALT,(err,hash)=>{
+    let user={email:"ian@ian",pass:"",username:"ianP"}
+    if(!err){
+        user.pass=hash
+        users.push(user)
     }
 })
 
-let users=[
-    {email:"rodri@rodri",pass:password,userName:"rodrigol"},
-    {email:"ema@ema",pass:password,userName:"emaRose"},
-    {email:"nahu@nahu",pass:password,userName:"nahuCua"},
-    {email:"ian@ian",pass:password,userName:"ianP"},
-]
 
 app.get("/users",(req,res)=>{
     res.send(users);
@@ -71,51 +89,22 @@ app.post("/user/:email/:pass/:username",(req,res)=>{
     })
 })
 
-app.post("/user/verify/:user/:pass",(req,res)=>{
+app.post("/verify/:user/:pass",(req,res)=>{
 
     const user= req.params.user;
     const pass= req.params.pass;
 
     users.find(el=>{
-        if(el.userName==user){
+        if(el.username==user){
             bcrypt.compare(pass,el.pass,(err,hash)=>{
                 if(!err){
-                    res.send(true);
+                    res.send(hash);
                 }
             })
-        }
+        } 
     })
-
-   
 });
 
-app.post("/user/verify/:email/:pass",(req,res)=>{
-
-    const token= req.headers.authorization.split(" ")[1]
-    const email= req.params.email;
-    const pass= req.params.pass;
-
-    if(token){
-        jsonwebtoken.verify(token,pass,(err,payload)=>{
-            if(!err){
-                users.find((user)=>{
-                    if(user.email== email){
-                        bcrypt.compare(pass,user.pass,(err,hash)=>{
-                            if(!err){
-                                res.send(`verify ${hash} `);
-                            }
-                        });
-                    }
-                });
-            }
-            else
-            res.send("no pudimos verificar su token")
-        });
-    }
-    else
-     res.send("el token no llego");
-   
-});
 
 app.delete("/delete/:email",(req,res)=>{
 
