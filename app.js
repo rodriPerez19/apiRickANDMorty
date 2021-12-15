@@ -93,16 +93,28 @@ app.post("/verify/:user/:pass",(req,res)=>{
 
     const user= req.params.user;
     const pass= req.params.pass;
+    const token= req.headers.authorization.split(" ")[1]
 
-    users.find(el=>{
-        if(el.username==user){
-            bcrypt.compare(pass,el.pass,(err,hash)=>{
-                if(!err){
-                    res.send(hash);
-                }
-            })
-        } 
-    })
+
+    if(token){
+        jsonwebtoken.verify(token,pass,(err,payload)=>{
+            if(!err){
+                users.find((el)=>{
+                    if(el.username== user){
+                        bcrypt.compare(pass,el.pass,(err,hash)=>{
+                            if(!err){
+                                res.send(hash);
+                            }
+                        });
+                    }
+                });
+            }
+            else
+            res.send(false)
+        });
+    }
+    else
+     res.send(false);
 });
 
 
