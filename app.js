@@ -49,11 +49,11 @@ app.get("/users",(req,res)=>{
     res.send(users);
 })
 
-app.get("/user/:email",(req,res)=>{
-    const email= req.params.email;
+app.get("/user/:username",(req,res)=>{
+    const username= req.params.username;
 
     users.find((user)=>{
-        if(user.email==email){
+        if(user.username==username){
             res.send(user);
         }
     });
